@@ -42,4 +42,4 @@ mvn org.apache.maven.plugins:maven-assembly-plugin:2.6:assembly -DdescriptorId=j
 ```
 
 ## Watch the video
-[![Watch the video](https://img.youtube.com/vi/AvF0XWTSPzU/maxresdefault.jpg)](https://youtu.be/AvF0XWTSPzU)
+[![Watch the video](https://img.youtube.com/vi/usvA59mkpeE/maxresdefault.jpg)](https://youtu.be/usvA59mkpeE)
