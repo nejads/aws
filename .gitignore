@@ -153,5 +153,10 @@ Temporary Items
 ### Serverless ###
 # Ignore build directory
 .serverless
+.factorypath
+.classpath
+.project
+.settings/
+
 
 # End of https://www.gitignore.io/api/osx,java,maven,intellij,serverless
