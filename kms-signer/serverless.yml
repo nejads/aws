@@ -4,26 +4,18 @@ provider:
   runtime: java8
   stage: dev
   region: eu-west-1
-
-# you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:ListBucket"
-#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:PutObject"
-#      Resource:
-#        Fn::Join:
-#          - ""
-#          - - "arn:aws:s3:::"
-#            - "Ref" : "ServerlessDeploymentBucket"
-#            - "/*"
-
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - kms:GetPublicKey
+        - kms:ListKeyPolicies
+        - kms:ListKeys
+        - kms:ListResourceTags
+        - kms:Sign
+        - kms:Verify
+      Resource: "arn:aws:kms:<REGION>:<ACCOUNT>:key/<KEY-ID>"
+  tracing:
+    lambda: true
 
 package:
   artifact: target/kms-signer-dev.jar
@@ -35,19 +27,3 @@ functions:
       - http:
           path: sign
           method: post
-
-#    Define function environment variables here
-#    environment:
-#      variable2: value2
-
-# you can add CloudFormation resource templates here
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"
