@@ -22,8 +22,14 @@ package:
 
 functions:
   sign:
-    handler: com.soroush.SigningHandler
+    handler: com.soroush.handler.SigningHandler
     events:
       - http:
           path: sign
           method: post
+  csr:
+    handler: com.soroush.handler.CsrHandler
+    events:
+      - http:
+          path: csr
+          method: get
