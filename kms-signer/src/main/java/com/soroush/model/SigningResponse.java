@@ -1,4 +1,4 @@
-package com.soroush;
+package com.soroush.model;
 
 public class SigningResponse {
 
