@@ -1,5 +1,6 @@
-package com.soroush;
+package com.soroush.handler;
 
+import static com.soroush.handler.HandlerCommons.getHeaders;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.http.HttpStatus.SC_BAD_REQUEST;
 import static org.apache.http.HttpStatus.SC_OK;
@@ -14,8 +15,6 @@ import com.soroush.model.SigningRequest;
 import com.soroush.model.SigningRequestModel;
 import com.soroush.model.SigningResponse;
 import com.soroush.security.AwsKmsSigner;
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -44,7 +43,6 @@ public class SigningHandler implements RequestHandler<SigningRequest, ApiGateway
   }
 
   private static ApiGatewayResponse errorResponse() {
-    LOG.debug("Are you here?");
     return ApiGatewayResponse.builder()
         .setStatusCode(SC_BAD_REQUEST)
         .setRawBody("Request is not valid")
@@ -66,10 +64,4 @@ public class SigningHandler implements RequestHandler<SigningRequest, ApiGateway
     return new SigningResponse(Base64.encodeAsString(signature));
   }
 
-  private static Map<String, String> getHeaders() {
-    final HashMap<String, String> headers = new HashMap<>();
-    headers.put("X-Powered-By", "AWS Lambda & Serverless");
-    headers.put("Content-Type", "application/json");
-    return headers;
-  }
 }
