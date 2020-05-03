@@ -1,13 +1,19 @@
 package com.soroush;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.http.HttpStatus.SC_BAD_REQUEST;
+import static org.apache.http.HttpStatus.SC_OK;
+
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.amazonaws.util.Base64;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.soroush.model.ApiGatewayResponse;
 import com.soroush.model.SigningRequest;
 import com.soroush.model.SigningRequestModel;
 import com.soroush.model.SigningResponse;
+import com.soroush.security.AwsKmsSigner;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
@@ -16,7 +22,7 @@ import org.apache.logging.log4j.Logger;
 public class SigningHandler implements RequestHandler<SigningRequest, ApiGatewayResponse> {
 
   private static final Logger LOG = LogManager.getLogger(SigningHandler.class);
-  Gson gson = new GsonBuilder().setPrettyPrinting().create();
+  private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
   @Override
   public ApiGatewayResponse handleRequest(SigningRequest request, Context context) {
@@ -34,27 +40,30 @@ public class SigningHandler implements RequestHandler<SigningRequest, ApiGateway
 
   private String validateAndExtractMessage(final SigningRequest request) {
     final SigningRequestModel body = gson.fromJson(request.getBody(), SigningRequestModel.class);
-    LOG.debug("Body {}", request.getBody());
-    LOG.debug("ParseBody {}", body);
     return body == null || body.getMessage() == null ? null : body.getMessage();
   }
 
   private static ApiGatewayResponse errorResponse() {
     LOG.debug("Are you here?");
     return ApiGatewayResponse.builder()
-        .setStatusCode(400)
+        .setStatusCode(SC_BAD_REQUEST)
         .setRawBody("Request is not valid")
         .setHeaders(getHeaders())
         .build();
   }
 
   private static ApiGatewayResponse successfulResponse(String message) {
-    SigningResponse response = new SigningResponse("This is the signed data");
     return ApiGatewayResponse.builder()
-        .setStatusCode(200)
-        .setObjectBody(response)
+        .setStatusCode(SC_OK)
+        .setObjectBody(getSigningResponse(message))
         .setHeaders(getHeaders())
         .build();
+  }
+
+  private static SigningResponse getSigningResponse(String message) {
+    AwsKmsSigner awsKmsSigner = AwsKmsSigner.getInstance();
+    final byte[] signature = awsKmsSigner.sign(message.getBytes(UTF_8));
+    return new SigningResponse(Base64.encodeAsString(signature));
   }
 
   private static Map<String, String> getHeaders() {
