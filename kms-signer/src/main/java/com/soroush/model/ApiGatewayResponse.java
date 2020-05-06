@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Map;
+import org.apache.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -50,7 +51,7 @@ public class ApiGatewayResponse {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    private int statusCode = 200;
+    private int statusCode = HttpStatus.SC_OK;
     private Map<String, String> headers = Collections.emptyMap();
     private String rawBody;
     private Object objectBody;
@@ -84,7 +85,8 @@ public class ApiGatewayResponse {
     }
 
     /**
-     * Builds the {@link ApiGatewayResponse} using the passed binary body encoded as base64. {@link #setBase64Encoded(boolean) setBase64Encoded(true)} will be
+     * Builds the {@link ApiGatewayResponse} using the passed binary body encoded as base64.
+     * {@link #setBase64Encoded(boolean) setBase64Encoded(true)} will be
      * in invoked automatically.
      */
     public Builder setBinaryBody(byte[] binaryBody) {
@@ -107,7 +109,7 @@ public class ApiGatewayResponse {
     }
 
     public ApiGatewayResponse build() {
-      String body = null;
+      String body;
       if (rawBody != null) {
         body = rawBody;
       } else if (objectBody != null) {
@@ -119,6 +121,8 @@ public class ApiGatewayResponse {
         }
       } else if (binaryBody != null) {
         body = new String(Base64.getEncoder().encode(binaryBody), StandardCharsets.UTF_8);
+      } else {
+        body = null;
       }
       return new ApiGatewayResponse(statusCode, body, headers, base64Encoded);
     }

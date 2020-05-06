@@ -4,8 +4,8 @@
 
   <groupId>com.soroush</groupId>
   <artifactId>kms-signer</artifactId>
-  <packaging>jar</packaging>
   <version>dev</version>
+  <packaging>jar</packaging>
   <name>kms-signer</name>
 
   <properties>

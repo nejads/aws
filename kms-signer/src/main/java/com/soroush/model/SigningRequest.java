@@ -29,6 +29,7 @@ public class SigningRequest {
   private String path;
 
   public SigningRequest() {
+    //Constructor
   }
 
   @JsonProperty("body")

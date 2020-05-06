@@ -27,7 +27,7 @@ public class AwsKmsSigner implements Signer {
     return signResult.getSignature().array();
   }
 
-  private SignRequest getSignRequest(final byte[] signingInput) {
+  private static SignRequest getSignRequest(final byte[] signingInput) {
     final byte[] hashedInput = DigestUtils.sha256(signingInput);
     final ByteBuffer message = ByteBuffer.wrap(hashedInput);
     return new SignRequest()
