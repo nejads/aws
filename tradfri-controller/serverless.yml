@@ -1,0 +1,37 @@
+service: tradfri-controller
+plugins:
+    - serverless-python-requirements
+
+provider:
+  name: aws
+  runtime: python3.8
+  stage: dev
+  region: eu-west-1
+
+  stackTags:
+    name: tradfri
+    owner: soroush-nejad
+
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:ListBucket"
+      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
+    - Effect: "Allow"
+      Action:
+        - "iot:Publish"
+      Resource: "arn:aws:iot:eu-west-1:510721335853:topic/tradfri/group/power"
+    - Effect: "Allow"
+      Action:
+        - "iot:Connect"
+      Resource: "arn:aws:iot:eu-west-1:510721335853:client/SoroushRaspberry"
+
+functions:
+  controller:
+    handler: handler.control
+    events:
+      - schedule: rate(30 minutes)
+    environment:
+      lat: 57.708870
+      lng: 11.974560
+      log_level: DEBUG
